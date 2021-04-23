@@ -1,12 +1,15 @@
+import React from 'react';
 import { format, parseISO } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
 import { api } from '../../services/api';
-import { convertDurationToTimeString } from '../../utils/converteDurationToTimeString';
+import { convertDurationToTimeString } from '../../utils/convertDurationToTimeString';
 
 import styles from './episode.module.scss';
+import { usePlayer } from '../../contexts/PlayerContext';
+import Head from 'next/head';
 
 type Episode = {
 	id: string;
@@ -32,26 +35,33 @@ export default function Episode({ episode }: EpisodeProps) {
 	// 	return <p>Carregando...</p>;
 	// } // fallback true
 
+	const { play } = usePlayer();
+
 	return (
 		<div className={styles.episode}>
-			<div className={styles.thumbnailContainer}>
-				<Link href={'/'}>
-					<button>
-						<img src="/arrow-left.svg" alt="Voltar" />
+			<Head>
+				<title>{episode.title}</title>
+			</Head>
+			<div className={styles.homepage}>
+				<div className={styles.thumbnailContainer}>
+					<Link href={'/'}>
+						<button>
+							<img src="/arrow-left.svg" alt="Voltar" />
+						</button>
+					</Link>
+					<Image width={700} height={160} src={episode.thumbnail} objectFit="cover" />
+					<button type="button" onClick={() => play(episode)}>
+						<img src="/play.svg" alt="Tocar Episodio" />
 					</button>
-				</Link>
-				<Image width={700} height={160} src={episode.thumbnail} objectFit="cover" />
-				<button type="button">
-					<img src="/play.svg" alt="Tocar Episodio" />
-				</button>
+				</div>
+				<header>
+					<h1>{episode.title}</h1>
+					<span>{episode.members}</span>
+					<span>{episode.publishedAt}</span>
+					<span>{episode.durationAsString}</span>
+				</header>
+				<div className={styles.description} dangerouslySetInnerHTML={{ __html: episode.description }} />
 			</div>
-			<header>
-				<h1>{episode.title}</h1>
-				<span>{episode.members}</span>
-				<span>{episode.publishedAt}</span>
-				<span>{episode.durationAsString}</span>
-			</header>
-			<div className={styles.description} dangerouslySetInnerHTML={{ __html: episode.description }} />
 		</div>
 	);
 }
@@ -95,8 +105,9 @@ export const getStaticProps: GetStaticProps = async ctx => {
 		url: data.file.url,
 	};
 
+	console.log(episode);
 	return {
 		props: { episode },
-		revalidate: 3600 * 24,
+		revalidate: 60 * 60 * 24,
 	};
 };
