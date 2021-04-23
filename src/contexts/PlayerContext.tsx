@@ -47,7 +47,6 @@ export function PlayerContextProvider({ children }: PlayerContextDataProps) {
 	}
 
 	function playList(list: Episode[], index: number) {
-		alert(list[index].title);
 		setEpisodeList(list);
 		setCurrentEpisodeIndex(index);
 		setIsPlaying(true);

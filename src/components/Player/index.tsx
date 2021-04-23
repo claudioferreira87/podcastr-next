@@ -34,7 +34,6 @@ export default function Player() {
 		}
 		if (isPlaying) {
 			audioRef.current.play();
-			console.log(currentEpisode);
 		} else {
 			audioRef.current.pause();
 		}

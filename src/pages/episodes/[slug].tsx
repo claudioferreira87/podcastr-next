@@ -105,7 +105,6 @@ export const getStaticProps: GetStaticProps = async ctx => {
 		url: data.file.url,
 	};
 
-	console.log(episode);
 	return {
 		props: { episode },
 		revalidate: 60 * 60 * 24,
